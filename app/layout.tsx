@@ -6,8 +6,8 @@ import "./globals.css";
 const googleAdsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
 
 export const metadata: Metadata = {
-  title: "Página de Vendas",
-  description: "Template escalável para páginas de vendas com checkout e tracking.",
+  title: "EGE Sales",
+  description: "Sistema escalavel para paginas de vendas EGE com checkout e tracking.",
   robots: {
     index: true,
     follow: true
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#fff8e7"
+  themeColor: "#123f2a"
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

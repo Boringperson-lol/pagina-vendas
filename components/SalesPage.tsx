@@ -6,6 +6,7 @@ import type { ProductContent } from "@/lib/types";
 import { getStoredProduct } from "@/lib/storage";
 import { ensureGoogleAds, trackEvent } from "@/lib/tracking";
 import { CTAButton } from "@/components/CTAButton";
+import { SalesHeader } from "@/components/SalesHeader";
 import { UrgencyTimer } from "@/components/UrgencyTimer";
 import { VideoBlock } from "@/components/VideoBlock";
 import { ViewCounter } from "@/components/ViewCounter";
@@ -32,39 +33,36 @@ export function SalesPage({ baseProduct }: SalesPageProps) {
   }, [product]);
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-cream pb-24 md:pb-0">
-      <div className="flex h-2 w-full">
-        <div className="flex-1 bg-accent" />
-        <div className="flex-1 bg-primary" />
-        <div className="flex-1 bg-green" />
-        <div className="flex-1 bg-accent" />
-      </div>
+    <main className="min-h-screen overflow-x-hidden bg-light pb-24 text-ink md:pb-0">
+      <SalesHeader />
 
-      <section className="px-4 py-12 md:py-16">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.02fr_0.98fr]">
+      <section className="bg-light px-4 py-10 md:py-16">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.03fr_0.97fr]">
           <div>
             <div className="mb-5 flex flex-wrap items-center gap-3">
               <ViewCounter />
               <UrgencyTimer minutes={product.urgencyMinutes} />
             </div>
-            <h1 className="text-4xl font-bold leading-tight text-ink md:text-6xl">{product.headline}</h1>
+            <p className="mb-4 text-sm font-black uppercase text-secondary">Oferta EGE com acesso imediato</p>
+            <h1 className="text-4xl font-black leading-tight text-primary md:text-6xl">{product.headline}</h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-muted md:text-xl">{product.subheadline}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
               <CTAButton product={product} className="w-full sm:w-auto" />
-              <span className="text-sm font-bold text-green">Compra segura e acesso imediato</span>
+              <span className="text-sm font-bold text-primary">Compra segura via Kiwify</span>
             </div>
           </div>
+
           <div className="relative">
             <img
               src={product.imageUrl}
               alt=""
               loading="eager"
-              className="aspect-[4/3] w-full rounded-md object-cover shadow-2xl"
+              className="aspect-[4/3] w-full rounded-md object-cover shadow-ege"
             />
-            <div className="absolute bottom-4 left-4 right-4 rounded-md bg-white/95 p-4 shadow-lg">
-              <p className="text-sm font-bold uppercase tracking-wide text-accent">Oferta atual</p>
-              <div className="mt-1 flex items-end gap-3">
-                <span className="text-4xl font-extrabold text-primary-dark">{product.price}</span>
+            <div className="absolute bottom-4 left-4 right-4 rounded-md bg-white/95 p-4 shadow-ege">
+              <p className="text-sm font-black uppercase text-accent">Oferta atual</p>
+              <div className="mt-1 flex flex-wrap items-end gap-3">
+                <span className="text-4xl font-black text-primary">{product.price}</span>
                 {product.originalPrice ? <span className="pb-1 text-sm text-muted line-through">{product.originalPrice}</span> : null}
               </div>
             </div>
@@ -74,25 +72,25 @@ export function SalesPage({ baseProduct }: SalesPageProps) {
 
       <VideoBlock product={product} />
 
-      <section className="px-4 py-16">
+      <section className="bg-soft px-4 py-16">
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-2">
           <div>
-            <h2 className="text-3xl font-bold text-ink md:text-4xl">Benefícios diretos para quem compra agora</h2>
+            <h2 className="text-3xl font-black text-primary md:text-4xl">Beneficios diretos para quem compra agora</h2>
             <div className="mt-8 space-y-5">
               {product.benefits.map((benefit) => (
                 <div key={benefit} className="flex gap-3">
-                  <CheckCircle2 className="mt-1 shrink-0 text-green" size={24} aria-hidden="true" />
+                  <CheckCircle2 className="mt-1 shrink-0 text-primary" size={24} aria-hidden="true" />
                   <p className="text-lg leading-7 text-muted">{benefit}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="rounded-md border border-primary/20 bg-white p-6 shadow-sm md:p-8">
+          <div className="rounded-md border border-primary/10 bg-white p-6 shadow-ege md:p-8">
             <div className="mb-5 inline-flex rounded-md bg-primary/10 p-3 text-primary">
               <FileText size={28} aria-hidden="true" />
             </div>
-            <h2 className="text-3xl font-bold text-ink">O que você recebe</h2>
+            <h2 className="text-3xl font-black text-primary">O que voce recebe</h2>
             <ul className="mt-6 space-y-4">
               {product.contentList.map((item) => (
                 <li key={item} className="flex gap-3 text-muted">
@@ -105,19 +103,19 @@ export function SalesPage({ baseProduct }: SalesPageProps) {
         </div>
       </section>
 
-      <section id="oferta" className="bg-primary-dark px-4 py-16 text-white">
+      <section id="oferta" className="bg-primary px-4 py-16 text-white">
         <div className="mx-auto grid max-w-5xl items-center gap-8 md:grid-cols-[1fr_0.8fr]">
           <div>
-            <Sparkles className="mb-4 text-yellow-300" size={34} aria-hidden="true" />
-            <h2 className="text-3xl font-bold md:text-5xl">Garanta o acesso antes do tempo acabar</h2>
+            <Sparkles className="mb-4 text-secondary" size={34} aria-hidden="true" />
+            <h2 className="text-3xl font-black md:text-5xl">Garanta o acesso antes do tempo acabar</h2>
             <p className="mt-4 text-lg leading-8 text-white/80">
-              Todos os botões desta página enviam para o checkout configurado no painel. O evento de conversão é disparado no clique.
+              Todos os botoes desta pagina enviam para o checkout Kiwify configurado. O evento de conversao e disparado no clique.
             </p>
           </div>
-          <div className="rounded-md bg-white p-6 text-ink shadow-2xl">
-            <p className="text-sm font-extrabold uppercase tracking-wide text-accent">Pagamento único</p>
+          <div className="rounded-md bg-white p-6 text-ink shadow-ege">
+            <p className="text-sm font-black uppercase text-accent">Pagamento unico</p>
             {product.originalPrice ? <p className="mt-3 text-muted line-through">De {product.originalPrice}</p> : null}
-            <p className="text-5xl font-extrabold text-primary-dark">{product.price}</p>
+            <p className="text-5xl font-black text-primary">{product.price}</p>
             <div className="my-5">
               <UrgencyTimer minutes={product.urgencyMinutes} />
             </div>
@@ -126,21 +124,21 @@ export function SalesPage({ baseProduct }: SalesPageProps) {
         </div>
       </section>
 
-      <section className="bg-white px-4 py-14">
+      <section className="bg-soft px-4 py-14">
         <div className="mx-auto flex max-w-5xl flex-col items-start gap-5 md:flex-row md:items-center">
-          <div className="rounded-full bg-green/10 p-5 text-green">
+          <div className="rounded-md bg-white p-5 text-primary shadow-ege">
             <LockKeyhole size={42} aria-hidden="true" />
           </div>
           <div>
-            <h2 className="text-3xl font-bold text-ink">Garantia e segurança</h2>
+            <h2 className="text-3xl font-black text-primary">Garantia e seguranca</h2>
             <p className="mt-3 text-lg leading-8 text-muted">{product.guarantee}</p>
           </div>
         </div>
       </section>
 
-      <section className="px-4 py-16 text-center">
+      <section className="bg-white px-4 py-16 text-center">
         <div className="mx-auto max-w-3xl">
-          <h2 className="text-3xl font-bold text-ink md:text-4xl">Pronto para facilitar sua próxima etapa?</h2>
+          <h2 className="text-3xl font-black text-primary md:text-4xl">Pronto para facilitar sua proxima etapa?</h2>
           <p className="mt-4 text-lg text-muted">Clique abaixo e conclua a compra no checkout configurado.</p>
           <div className="mt-8">
             <CTAButton product={product} className="w-full sm:w-auto" label={`${product.cta} - ${product.price}`} />
@@ -148,11 +146,11 @@ export function SalesPage({ baseProduct }: SalesPageProps) {
         </div>
       </section>
 
-      <footer className="bg-ink px-4 py-8 text-center text-sm text-white/70">
+      <footer className="bg-primary-dark px-4 py-8 text-center text-sm text-white/70">
         <p>{product.footerText}</p>
       </footer>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white p-3 shadow-2xl md:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white p-3 shadow-ege md:hidden">
         <CTAButton product={product} className="w-full py-3" label={product.cta} />
       </div>
     </main>

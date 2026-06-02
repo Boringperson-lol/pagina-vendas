@@ -3,7 +3,7 @@ import { products } from "@/data/products";
 import { AdminPanel } from "@/components/AdminPanel";
 
 export const metadata: Metadata = {
-  title: "Painel secreto",
+  title: "Painel secreto EGE",
   robots: {
     index: false,
     follow: false,

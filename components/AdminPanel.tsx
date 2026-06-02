@@ -1,7 +1,8 @@
 "use client";
 
-import { Eye, Plus, Save } from "lucide-react";
+import { Eye, LogOut, Plus, Save } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { ProductContent } from "@/lib/types";
 import { readStoredProducts, upsertStoredProduct } from "@/lib/storage";
 
@@ -20,10 +21,10 @@ const emptyProduct: ProductContent = {
   checkoutUrl: "https://pay.kiwify.com.br/seu-checkout",
   imageUrl: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1400&q=80",
   videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-  benefits: ["Benefício principal", "Benefício secundário", "Benefício de segurança"],
+  benefits: ["Beneficio principal", "Beneficio secundario", "Beneficio de seguranca"],
   contentList: ["Item entregue 1", "Item entregue 2", "Item entregue 3"],
   guarantee: "Descreva aqui sua garantia.",
-  footerText: "Todos os direitos reservados.",
+  footerText: "Todos os direitos reservados a EGE - Escola Genial da Existencia.",
   tracking: {
     googleAdsId: "",
     conversionLabel: ""
@@ -51,6 +52,7 @@ function textToList(value: string) {
 }
 
 export function AdminPanel({ baseProducts }: AdminPanelProps) {
+  const router = useRouter();
   const [products, setProducts] = useState<ProductContent[]>(baseProducts);
   const [selectedSlug, setSelectedSlug] = useState(baseProducts[0]?.slug || emptyProduct.slug);
   const selectedProduct = useMemo(
@@ -100,30 +102,46 @@ export function AdminPanel({ baseProducts }: AdminPanelProps) {
     setDraft(nextProduct);
   }
 
+  async function logout() {
+    await fetch("/api/admin/logout", { method: "POST" });
+    router.replace("/painelsecreto/login");
+    router.refresh();
+  }
+
   return (
-    <main className="min-h-screen bg-[#f5f2ea] px-4 py-8 text-ink">
+    <main className="min-h-screen bg-soft px-4 py-8 text-ink">
       <div className="mx-auto max-w-7xl">
         <header className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-sm font-extrabold uppercase tracking-wide text-accent">Acesso direto por URL</p>
-            <h1 className="mt-2 text-4xl font-bold">Painel secreto</h1>
+            <p className="text-sm font-black uppercase text-accent">EGE Sales Admin</p>
+            <h1 className="mt-2 text-4xl font-black text-primary">Painel secreto</h1>
             <p className="mt-2 max-w-2xl text-muted">
-              Edite conteúdo, checkout, mídia e Google Ads sem alterar código. Os dados são salvos neste navegador.
+              Edite conteudo, checkout, midia e Google Ads sem alterar codigo. Os dados sao salvos neste navegador.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={createProduct}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-ink px-4 py-3 font-bold text-white"
-          >
-            <Plus size={18} aria-hidden="true" />
-            Novo produto
-          </button>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={createProduct}
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-primary px-4 py-3 font-black text-white transition hover:bg-secondary hover:text-primary"
+            >
+              <Plus size={18} aria-hidden="true" />
+              Novo produto
+            </button>
+            <button
+              type="button"
+              onClick={logout}
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-primary/20 bg-white px-4 py-3 font-black text-primary transition hover:border-accent hover:text-accent"
+            >
+              <LogOut size={18} aria-hidden="true" />
+              Sair
+            </button>
+          </div>
         </header>
 
         <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-          <aside className="rounded-md bg-white p-4 shadow-sm">
-            <h2 className="mb-3 text-sm font-extrabold uppercase tracking-wide text-muted">Produtos</h2>
+          <aside className="rounded-md bg-white p-4 shadow-ege">
+            <h2 className="mb-3 text-sm font-black uppercase text-muted">Produtos</h2>
             <div className="space-y-2">
               {products.map((product) => (
                 <button
@@ -131,7 +149,7 @@ export function AdminPanel({ baseProducts }: AdminPanelProps) {
                   type="button"
                   onClick={() => setSelectedSlug(product.slug)}
                   className={`w-full rounded-md px-3 py-3 text-left font-bold transition ${
-                    product.slug === selectedSlug ? "bg-primary text-white" : "bg-[#f5f2ea] text-ink hover:bg-primary/10"
+                    product.slug === selectedSlug ? "bg-primary text-white" : "bg-soft text-ink hover:bg-primary/10"
                   }`}
                 >
                   /{product.slug}
@@ -140,12 +158,12 @@ export function AdminPanel({ baseProducts }: AdminPanelProps) {
             </div>
           </aside>
 
-          <section className="rounded-md bg-white p-4 shadow-sm md:p-6">
+          <section className="rounded-md bg-white p-4 shadow-ege md:p-6">
             <div className="grid gap-4 md:grid-cols-2">
               <Field label="Slug" value={draft.slug} onChange={(value) => updateField("slug", slugify(value))} />
-              <Field label="Preço" value={draft.price} onChange={(value) => updateField("price", value)} />
+              <Field label="Preco" value={draft.price} onChange={(value) => updateField("price", value)} />
               <Field
-                label="Preço original"
+                label="Preco original"
                 value={draft.originalPrice || ""}
                 onChange={(value) => updateField("originalPrice", value)}
               />
@@ -163,7 +181,7 @@ export function AdminPanel({ baseProducts }: AdminPanelProps) {
                 className="md:col-span-2"
               />
               <Field
-                label="Vídeo (URL embed)"
+                label="Video (URL embed)"
                 value={draft.videoUrl}
                 onChange={(value) => updateField("videoUrl", value)}
                 className="md:col-span-2"
@@ -179,15 +197,11 @@ export function AdminPanel({ baseProducts }: AdminPanelProps) {
                 onChange={(value) => updateField("tracking", { ...draft.tracking, conversionLabel: value })}
               />
               <Field
-                label="Timer de urgência (minutos)"
+                label="Timer de urgencia (minutos)"
                 value={String(draft.urgencyMinutes)}
                 onChange={(value) => updateField("urgencyMinutes", Number(value) || 15)}
               />
-              <Field
-                label="Rodapé"
-                value={draft.footerText}
-                onChange={(value) => updateField("footerText", value)}
-              />
+              <Field label="Rodape" value={draft.footerText} onChange={(value) => updateField("footerText", value)} />
               <TextArea
                 label="Headline"
                 value={draft.headline}
@@ -201,12 +215,12 @@ export function AdminPanel({ baseProducts }: AdminPanelProps) {
                 className="md:col-span-2"
               />
               <TextArea
-                label="Benefícios (um por linha)"
+                label="Beneficios (um por linha)"
                 value={listToText(draft.benefits)}
                 onChange={(value) => updateField("benefits", textToList(value))}
               />
               <TextArea
-                label="Lista do conteúdo (um por linha)"
+                label="Lista do conteudo (um por linha)"
                 value={listToText(draft.contentList)}
                 onChange={(value) => updateField("contentList", textToList(value))}
               />
@@ -222,19 +236,19 @@ export function AdminPanel({ baseProducts }: AdminPanelProps) {
               <button
                 type="button"
                 onClick={saveProduct}
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-accent px-5 py-3 font-extrabold text-white"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-accent px-5 py-3 font-black text-white transition hover:bg-secondary hover:text-primary"
               >
                 <Save size={18} aria-hidden="true" />
-                Salvar alterações
+                Salvar alteracoes
               </button>
               <a
                 href={`/${draft.slug}`}
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-ink/20 px-5 py-3 font-bold text-ink"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-primary/20 px-5 py-3 font-bold text-primary transition hover:border-secondary hover:bg-secondary"
               >
                 <Eye size={18} aria-hidden="true" />
-                Ver página
+                Ver pagina
               </a>
-              {savedMessage ? <p className="font-bold text-green">{savedMessage}</p> : null}
+              {savedMessage ? <p className="font-bold text-primary">{savedMessage}</p> : null}
             </div>
           </section>
         </div>
@@ -260,7 +274,7 @@ function Field({
       <input
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="min-h-11 w-full rounded-md border border-black/15 bg-white px-3 py-2 outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
+        className="min-h-11 w-full rounded-md border border-primary/15 bg-white px-3 py-2 outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
       />
     </label>
   );
@@ -284,7 +298,7 @@ function TextArea({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         rows={5}
-        className="w-full resize-y rounded-md border border-black/15 bg-white px-3 py-2 outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
+        className="w-full resize-y rounded-md border border-primary/15 bg-white px-3 py-2 outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
       />
     </label>
   );

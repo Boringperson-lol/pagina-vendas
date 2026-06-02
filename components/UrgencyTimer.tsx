@@ -20,7 +20,7 @@ export function UrgencyTimer({ minutes }: { minutes: number }) {
   const secondsText = String(secondsLeft % 60).padStart(2, "0");
 
   return (
-    <div className="inline-flex items-center gap-2 rounded-md border border-red-200 bg-red-50 px-4 py-3 font-bold text-red-800">
+    <div className="inline-flex items-center gap-2 rounded-md border border-accent/20 bg-red-50 px-4 py-3 font-bold text-accent">
       <Clock3 size={18} aria-hidden="true" />
       Oferta reservada por {minutesText}:{secondsText}
     </div>

@@ -9,9 +9,15 @@ type CTAButtonProps = {
   product: ProductContent;
   className?: string;
   label?: string;
+  variant?: "primary" | "secondary";
 };
 
-export function CTAButton({ product, className = "", label }: CTAButtonProps) {
+const variants = {
+  primary: "bg-accent text-white shadow-red-950/20 hover:bg-secondary hover:text-primary focus:ring-secondary/35",
+  secondary: "bg-primary text-white shadow-primary/20 hover:bg-secondary hover:text-primary focus:ring-secondary/35"
+};
+
+export function CTAButton({ product, className = "", label, variant = "primary" }: CTAButtonProps) {
   function handleClick(event: MouseEvent<HTMLAnchorElement>) {
     event.preventDefault();
     ensureGoogleAds(product.tracking);
@@ -29,7 +35,7 @@ export function CTAButton({ product, className = "", label }: CTAButtonProps) {
     <a
       href={product.checkoutUrl}
       onClick={handleClick}
-      className={`inline-flex min-h-14 items-center justify-center gap-2 rounded-md bg-accent px-6 py-4 text-center text-base font-extrabold text-white shadow-lg shadow-red-900/20 transition hover:-translate-y-0.5 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-200 ${className}`}
+      className={`inline-flex min-h-14 items-center justify-center gap-2 rounded-md px-6 py-4 text-center text-base font-extrabold shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 ${variants[variant]} ${className}`}
     >
       <ShieldCheck size={20} aria-hidden="true" />
       {label || product.cta}

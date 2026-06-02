@@ -10,9 +10,9 @@ type ProductPageProps = {
 function emptyProduct(slug: string): ProductContent {
   return {
     slug,
-    headline: "Produto não encontrado neste navegador",
+    headline: "Produto ainda nao publicado neste navegador",
     subheadline:
-      "Se você criou este produto no painel secreto, abra a página no mesmo navegador em que salvou os dados.",
+      "Se voce criou este produto no painel secreto, abra a pagina no mesmo navegador em que salvou os dados.",
     price: "R$ 0,00",
     originalPrice: "",
     cta: "Voltar para o painel",
@@ -20,10 +20,10 @@ function emptyProduct(slug: string): ProductContent {
     checkoutUrl: "/painelsecreto",
     imageUrl: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1400&q=80",
     videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    benefits: ["Crie ou edite este slug em /painelsecreto para publicar a página."],
-    contentList: ["Dados locais ainda não encontrados para este slug."],
-    guarantee: "O painel salva os dados em localStorage para prototipagem e mock API.",
-    footerText: "Página aguardando configuração.",
+    benefits: ["Crie ou edite este slug em /painelsecreto para publicar a pagina."],
+    contentList: ["Dados locais ainda nao encontrados para este slug."],
+    guarantee: "O painel salva os dados em localStorage como mock API para prototipagem.",
+    footerText: "Pagina aguardando configuracao.",
     tracking: {
       googleAdsId: "",
       conversionLabel: ""
@@ -36,8 +36,8 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const product = getBaseProduct(slug);
 
   return {
-    title: product?.headline || `Página ${slug}`,
-    description: product?.subheadline || "Página de vendas dinâmica."
+    title: product?.headline || `Pagina ${slug}`,
+    description: product?.subheadline || "Pagina de vendas dinamica."
   };
 }
 

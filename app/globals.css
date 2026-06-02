@@ -1,16 +1,17 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Noto+Serif:wght@600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800;900&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #8a5a12;
-  --color-primary-dark: #563606;
-  --color-accent: #c2252b;
-  --color-green: #2f6f42;
-  --color-cream: #fff8e7;
+  --color-primary: #123f2a;
+  --color-primary-dark: #0a2619;
+  --color-secondary: #d8aa43;
+  --color-accent: #c92a2a;
+  --color-light: #fffdf7;
+  --color-soft: #eef7ef;
   --color-paper: #ffffff;
-  --color-ink: #1d1b16;
-  --color-muted: #62594d;
-  --font-serif: "Noto Serif", ui-serif, Georgia, serif;
+  --color-ink: #142018;
+  --color-muted: #5d6b61;
+  --shadow-ege: 0 18px 45px rgb(10 38 25 / 0.14);
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -19,8 +20,8 @@ html {
 }
 
 body {
-  background: #fff8e7;
-  color: #1d1b16;
+  background: #fffdf7;
+  color: #142018;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
@@ -28,7 +29,7 @@ body {
 h1,
 h2,
 h3 {
-  font-family: var(--font-serif);
+  letter-spacing: 0;
 }
 
 button,

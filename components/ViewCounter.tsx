@@ -27,8 +27,8 @@ export function ViewCounter() {
   }, []);
 
   return (
-    <p className="rounded-full bg-white/90 px-4 py-2 text-sm font-bold text-primary-dark shadow-sm">
-      👀 {viewers} pessoas vendo este material agora
+    <p className="rounded-full bg-white/95 px-4 py-2 text-sm font-bold text-primary shadow-sm">
+      <span aria-hidden="true">👀</span> {viewers} pessoas vendo este material agora
     </p>
   );
 }
