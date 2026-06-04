@@ -132,8 +132,8 @@ export function SalesPage({ baseProduct }: SalesPageProps) {
 
       <section className="bg-white px-4 py-16 text-center">
         <div className="mx-auto max-w-3xl">
-          <h2 className="text-3xl font-black text-primary md:text-4xl">Pronto para facilitar sua facilitar sua vida</h2>
-          <p className="mt-4 text-lg text-muted">Clique abaixo e adquira agora mesmo o seu material.</p>
+          <h2 className="text-3xl font-black text-primary md:text-4xl">Pronto para facilitar sua vida?</h2>
+          <p className="mt-4 text-lg text-muted">Clique abaixo e adquira o seu material agora mesmo!</p>
           <div className="mt-8">
             <CTAButton product={product} className="w-full sm:w-auto" label={`${product.cta} - ${product.price}`} />
           </div>
