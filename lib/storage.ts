@@ -1,20 +1,10 @@
 "use client";
 
 import type { ProductContent } from "@/lib/types";
+import { normalizeProduct } from "@/lib/product-normalize";
 
 export const PRODUCTS_STORAGE_KEY = "ege-sales-products";
 const LEGACY_STORAGE_KEY = "sales-template-products";
-
-function normalizeProduct(product: ProductContent): ProductContent {
-  return {
-    ...product,
-    footerText: product.footerText || "Todos os direitos reservados a EGE - Escola Genial da Existencia.",
-    tracking: product.tracking || {
-      googleAdsId: "",
-      conversionLabel: ""
-    }
-  };
-}
 
 export function readStoredProducts(): ProductContent[] {
   if (typeof window === "undefined") return [];

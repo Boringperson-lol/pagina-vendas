@@ -1,10 +1,10 @@
 "use client";
 
-import { Eye, LogOut, Plus, Save } from "lucide-react";
+import { Eye, LogOut, Plus, Save, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ProductContent } from "@/lib/types";
-import { readStoredProducts, upsertStoredProduct } from "@/lib/storage";
+import { readStoredProducts, writeStoredProducts } from "@/lib/storage";
 
 type AdminPanelProps = {
   baseProducts: ProductContent[];
@@ -59,17 +59,59 @@ export function AdminPanel({ baseProducts }: AdminPanelProps) {
     () => products.find((product) => product.slug === selectedSlug) || products[0] || emptyProduct,
     [products, selectedSlug]
   );
+  const canDeleteSelectedProduct = products.some((product) => product.slug === selectedProduct.slug);
   const [draft, setDraft] = useState<ProductContent>(selectedProduct);
   const [savedMessage, setSavedMessage] = useState("");
+  const [storageMessage, setStorageMessage] = useState("");
 
   useEffect(() => {
-    const storedProducts = readStoredProducts();
-    const mergedProducts = [
-      ...storedProducts,
-      ...baseProducts.filter((product) => !storedProducts.some((stored) => stored.slug === product.slug))
-    ];
-    setProducts(mergedProducts);
-    setSelectedSlug(mergedProducts[0]?.slug || emptyProduct.slug);
+    let isCurrent = true;
+
+    async function loadProducts() {
+      const storedProducts = readStoredProducts();
+
+      try {
+        const response = await fetch("/api/admin/products", { cache: "no-store" });
+        const data = (await response.json()) as {
+          products?: ProductContent[];
+          storageConfigured?: boolean;
+          error?: string;
+        };
+
+        if (!response.ok) throw new Error(data.error || "Nao foi possivel carregar os produtos.");
+        if (!isCurrent) return;
+
+        const serverProducts = data.products || [];
+        const mergedProducts = [
+          ...serverProducts,
+          ...storedProducts.filter((product) => !serverProducts.some((serverProduct) => serverProduct.slug === product.slug))
+        ];
+
+        setProducts(mergedProducts);
+        setSelectedSlug(mergedProducts[0]?.slug || emptyProduct.slug);
+        setStorageMessage(
+          data.storageConfigured
+            ? ""
+            : "Armazenamento persistente pendente: configure Redis/Upstash na Vercel antes de usar em producao."
+        );
+      } catch (error) {
+        if (!isCurrent) return;
+
+        const mergedProducts = [
+          ...storedProducts,
+          ...baseProducts.filter((product) => !storedProducts.some((stored) => stored.slug === product.slug))
+        ];
+        setProducts(mergedProducts);
+        setSelectedSlug(mergedProducts[0]?.slug || emptyProduct.slug);
+        setStorageMessage(error instanceof Error ? error.message : "Nao foi possivel carregar os produtos persistidos.");
+      }
+    }
+
+    loadProducts();
+
+    return () => {
+      isCurrent = false;
+    };
   }, [baseProducts]);
 
   useEffect(() => {
@@ -80,18 +122,59 @@ export function AdminPanel({ baseProducts }: AdminPanelProps) {
     setDraft((current) => ({ ...current, [key]: value }));
   }
 
-  function saveProduct() {
+  async function saveProduct() {
     const normalizedSlug = slugify(draft.slug);
     const nextDraft = { ...draft, slug: normalizedSlug || emptyProduct.slug };
-    const nextProducts = upsertStoredProduct(nextDraft);
-    const mergedProducts = [
-      ...nextProducts,
-      ...baseProducts.filter((product) => !nextProducts.some((stored) => stored.slug === product.slug))
-    ];
-    setProducts(mergedProducts);
-    setSelectedSlug(nextDraft.slug);
-    setSavedMessage(`Produto salvo. Acesse /${nextDraft.slug}`);
-    window.setTimeout(() => setSavedMessage(""), 4000);
+
+    try {
+      const response = await fetch("/api/admin/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nextDraft)
+      });
+      const data = (await response.json()) as { products?: ProductContent[]; error?: string };
+
+      if (!response.ok) throw new Error(data.error || "Nao foi possivel salvar o produto.");
+
+      const nextProducts = data.products || [];
+      writeStoredProducts(nextProducts);
+      setProducts(nextProducts);
+      setSelectedSlug(nextDraft.slug);
+      setStorageMessage("");
+      setSavedMessage(`Produto salvo com persistencia. Acesse /${nextDraft.slug}`);
+    } catch (error) {
+      setSavedMessage(error instanceof Error ? error.message : "Nao foi possivel salvar o produto.");
+    }
+
+    window.setTimeout(() => setSavedMessage(""), 6000);
+  }
+
+  async function deleteProduct() {
+    const slugToDelete = selectedProduct.slug;
+    const confirmed = window.confirm(`Excluir a pagina /${slugToDelete}?`);
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch("/api/admin/products", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: slugToDelete })
+      });
+      const data = (await response.json()) as { products?: ProductContent[]; error?: string };
+
+      if (!response.ok) throw new Error(data.error || "Nao foi possivel excluir a pagina.");
+
+      const nextProducts = data.products || [];
+      writeStoredProducts(nextProducts);
+      setProducts(nextProducts);
+      setSelectedSlug(nextProducts[0]?.slug || emptyProduct.slug);
+      setStorageMessage("");
+      setSavedMessage(`Pagina /${slugToDelete} excluida.`);
+    } catch (error) {
+      setSavedMessage(error instanceof Error ? error.message : "Nao foi possivel excluir a pagina.");
+    }
+
+    window.setTimeout(() => setSavedMessage(""), 6000);
   }
 
   function createProduct() {
@@ -116,8 +199,9 @@ export function AdminPanel({ baseProducts }: AdminPanelProps) {
             <p className="text-sm font-black uppercase text-accent">EGE Sales Admin</p>
             <h1 className="mt-2 text-4xl font-black text-primary">Painel secreto</h1>
             <p className="mt-2 max-w-2xl text-muted">
-              Edite conteudo, checkout, midia e Google Ads sem alterar codigo. Os dados sao salvos neste navegador.
+              Edite conteudo, checkout, midia e Google Ads sem alterar codigo.
             </p>
+            {storageMessage ? <p className="mt-3 max-w-2xl font-bold text-accent">{storageMessage}</p> : null}
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
             <button
@@ -248,6 +332,15 @@ export function AdminPanel({ baseProducts }: AdminPanelProps) {
                 <Eye size={18} aria-hidden="true" />
                 Ver pagina
               </a>
+              <button
+                type="button"
+                onClick={deleteProduct}
+                disabled={!canDeleteSelectedProduct}
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-red-200 px-5 py-3 font-bold text-red-700 transition hover:border-red-700 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <Trash2 size={18} aria-hidden="true" />
+                Excluir pagina
+              </button>
               {savedMessage ? <p className="font-bold text-primary">{savedMessage}</p> : null}
             </div>
           </section>

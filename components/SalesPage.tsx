@@ -1,9 +1,8 @@
 "use client";
 
 import { CheckCircle2, FileText, Gift, LockKeyhole, Sparkles } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import type { ProductContent } from "@/lib/types";
-import { getStoredProduct } from "@/lib/storage";
 import { ensureGoogleAds, trackEvent } from "@/lib/tracking";
 import { CTAButton } from "@/components/CTAButton";
 import { SalesHeader } from "@/components/SalesHeader";
@@ -16,12 +15,7 @@ type SalesPageProps = {
 };
 
 export function SalesPage({ baseProduct }: SalesPageProps) {
-  const [product, setProduct] = useState(baseProduct);
-
-  useEffect(() => {
-    const storedProduct = getStoredProduct(baseProduct.slug);
-    if (storedProduct) setProduct(storedProduct);
-  }, [baseProduct.slug]);
+  const product = baseProduct;
 
   useEffect(() => {
     ensureGoogleAds(product.tracking);

@@ -30,6 +30,9 @@ ADMIN_SESSION_SECRET="troque-este-segredo-longo"
 NEXT_PUBLIC_EGE_STORE_URL="https://sualoja.com.br"
 NEXT_PUBLIC_GOOGLE_ADS_ID="AW-XXXXXXXXX"
 NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL="XXXXXXXXXXXX"
+
+UPSTASH_REDIS_REST_URL="https://seu-redis.upstash.io"
+UPSTASH_REDIS_REST_TOKEN="seu-token"
 ```
 
 As credenciais do painel nunca sao expostas no frontend. A validacao acontece na API server-side e a sessao e salva em cookie httpOnly.
@@ -43,7 +46,7 @@ As credenciais do painel nunca sao expostas no frontend. A validacao acontece na
 5. Clique em `Salvar alteracoes`.
 6. Abra a rota gerada, como `/meu-produto`.
 
-Nesta versao, o painel usa `localStorage` como mock API. Para producao com multiplos usuarios, substitua `lib/storage.ts` por uma API persistente ou banco de dados.
+Os produtos criados no painel sao salvos em Redis/Upstash via API server-side. Configure `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN` na Vercel para garantir persistencia real entre navegadores, horas e novos deploys. O projeto tambem aceita `KV_REST_API_URL`, `KV_REST_API_TOKEN` e os nomes gerados pela integracao com prefixo `UPSTASH_REDIS_REST_KV`.
 
 ## Google Ads
 
