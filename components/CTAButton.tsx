@@ -2,6 +2,7 @@
 
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import type { MouseEvent } from "react";
+import { useRef, useState } from "react";
 import type { ProductContent } from "@/lib/types";
 import { ensureGoogleAds, trackClick, trackConversion, trackEvent } from "@/lib/tracking";
 
@@ -18,14 +19,24 @@ const variants = {
 };
 
 export function CTAButton({ product, className = "", label, variant = "primary" }: CTAButtonProps) {
-  function handleClick(event: MouseEvent<HTMLAnchorElement>) {
+  const isTrackingRef = useRef(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
+  async function handleClick(event: MouseEvent<HTMLAnchorElement>) {
     event.preventDefault();
+    event.stopPropagation();
+
+    if (isTrackingRef.current) return;
+
+    isTrackingRef.current = true;
+    setIsRedirecting(true);
+
     ensureGoogleAds(product.tracking);
     trackEvent("cta_click", {
       slug: product.slug,
       checkoutUrl: product.checkoutUrl
     });
-    void trackClick(product.slug);
+    await trackClick(product.slug);
     trackConversion(product.tracking);
     window.setTimeout(() => {
       window.location.href = product.checkoutUrl;
@@ -36,7 +47,8 @@ export function CTAButton({ product, className = "", label, variant = "primary" 
     <a
       href={product.checkoutUrl}
       onClick={handleClick}
-      className={`inline-flex min-h-14 items-center justify-center gap-2 rounded-md px-6 py-4 text-center text-base font-extrabold shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 ${variants[variant]} ${className}`}
+      aria-disabled={isRedirecting}
+      className={`inline-flex min-h-14 items-center justify-center gap-2 rounded-md px-6 py-4 text-center text-base font-extrabold shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 ${isRedirecting ? "pointer-events-none opacity-80" : ""} ${variants[variant]} ${className}`}
     >
       <ShieldCheck size={20} aria-hidden="true" />
       {label || product.cta}

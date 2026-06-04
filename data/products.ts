@@ -32,7 +32,7 @@ export const products: ProductContent[] = [
       "Acesso imediato apos confirmacao do pagamento"
     ],
     guarantee:
-      "Garantia incondicional de 7 dias. Se o material nao facilitar sua rotina, voce pode solicitar reembolso.",
+      "Garantia de 7 dias EGE: Adquira o material com tranquilidade. Caso a nossa proposta não traga praticidade para a sua rotina dentro desse período, o seu direito de devolução está garantido.",
     footerText: "Todos os direitos reservados a EGE - Escola Genial da Existencia.",
     tracking: defaultTracking
   },

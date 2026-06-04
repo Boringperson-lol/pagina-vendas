@@ -14,6 +14,25 @@ type SalesPageProps = {
   baseProduct: ProductContent;
 };
 
+const updatedGuaranteeText =
+  "Garantia de 7 dias EGE: Adquira o material com tranquilidade. Caso a nossa proposta não traga praticidade para a sua rotina dentro desse período, o seu direito de devolução está garantido.";
+
+function getGuaranteeText(value: string) {
+  const normalizedValue = value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+  if (
+    normalizedValue.includes("garantia ege de qualidade de 7 dias") ||
+    normalizedValue.includes("garantia incondicional de 7 dias")
+  ) {
+    return updatedGuaranteeText;
+  }
+
+  return value;
+}
+
 export function SalesPage({ baseProduct }: SalesPageProps) {
   const product = baseProduct;
 
@@ -107,7 +126,7 @@ export function SalesPage({ baseProduct }: SalesPageProps) {
             </p>
           </div>
           <div className="rounded-md bg-white p-6 text-ink shadow-ege">
-            <p className="text-sm font-black uppercase text-accent">Pagamento unico</p>
+            <p className="text-sm font-black uppercase text-accent">Pagamento Único</p>
             {product.originalPrice ? <p className="mt-3 text-muted line-through">De {product.originalPrice}</p> : null}
             <p className="text-5xl font-black text-primary">{product.price}</p>
             <div className="my-5">
@@ -125,7 +144,7 @@ export function SalesPage({ baseProduct }: SalesPageProps) {
           </div>
           <div>
             <h2 className="text-3xl font-black text-primary">Garantia e segurança</h2>
-            <p className="mt-3 text-lg leading-8 text-muted">{product.guarantee}</p>
+            <p className="mt-3 text-lg leading-8 text-muted">{getGuaranteeText(product.guarantee)}</p>
           </div>
         </div>
       </section>

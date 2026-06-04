@@ -6,6 +6,7 @@ declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
     dataLayer?: unknown[];
+    __trackingLock?: boolean;
   }
 }
 
@@ -46,15 +47,31 @@ export function trackConversion(settings: TrackingSettings) {
   });
 }
 
+const clickCooldownMs = 500;
+const lastTrackedClickBySlug = new Map<string, number>();
+
 export async function trackClick(slug: string) {
+  if (window.__trackingLock) return false;
+  window.__trackingLock = true;
+
+  const now = Date.now();
+  const lastTrackedAt = lastTrackedClickBySlug.get(slug) || 0;
+
+  if (now - lastTrackedAt < clickCooldownMs) {
+    return false;
+  }
+
+  lastTrackedClickBySlug.set(slug, now);
+  console.log("trackClick disparado", slug);
+
   const payload = JSON.stringify({ slug });
 
   if (navigator.sendBeacon) {
-    const sent = navigator.sendBeacon(
+    navigator.sendBeacon(
       "/api/track-click",
       new Blob([payload], { type: "application/json" })
     );
-    if (sent) return true;
+    return true;
   }
 
   try {
