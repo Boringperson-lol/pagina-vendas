@@ -33,6 +33,7 @@ export const products: ProductContent[] = [
     ],
     guarantee:
       "Garantia de 7 dias EGE: Adquira o material com tranquilidade. Caso a nossa proposta não traga praticidade para a sua rotina dentro desse período, o seu direito de devolução está garantido.",
+    finalCtaTitle: "Pronto para facilitar sua vida?",
     footerText: "Todos os direitos reservados a EGE - Escola Genial da Existencia.",
     tracking: defaultTracking
   },
@@ -62,6 +63,7 @@ export const products: ProductContent[] = [
       "Template componentizado e reutilizavel"
     ],
     guarantee: "Voce recebe uma base flexivel para multiplicar paginas de vendas sem mexer no codigo.",
+    finalCtaTitle: "Pronto para facilitar sua vida?",
     footerText: "Sistema EGE Sales para produtos digitais.",
     tracking: defaultTracking
   }

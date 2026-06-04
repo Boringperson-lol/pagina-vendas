@@ -17,6 +17,7 @@ export type ProductContent = {
   benefits: string[];
   contentList: string[];
   guarantee: string;
+  finalCtaTitle?: string;
   footerText: string;
   tracking: TrackingSettings;
 };

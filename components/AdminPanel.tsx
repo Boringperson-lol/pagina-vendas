@@ -24,6 +24,7 @@ const emptyProduct: ProductContent = {
   benefits: ["Beneficio principal", "Beneficio secundario", "Beneficio de seguranca"],
   contentList: ["Item entregue 1", "Item entregue 2", "Item entregue 3"],
   guarantee: "Descreva aqui sua garantia.",
+  finalCtaTitle: "Pronto para facilitar sua vida?",
   footerText: "Todos os direitos reservados a EGE - Escola Genial da Existencia.",
   tracking: {
     googleAdsId: "",
@@ -300,6 +301,11 @@ export function AdminPanel({ baseProducts }: AdminPanelProps) {
                 onChange={(value) => updateField("originalPrice", value)}
               />
               <Field label="Texto do CTA" value={draft.cta} onChange={(value) => updateField("cta", value)} />
+              <Field
+                label="Titulo acima do CTA final"
+                value={draft.finalCtaTitle || "Pronto para facilitar sua vida?"}
+                onChange={(value) => updateField("finalCtaTitle", value)}
+              />
               <Field
                 label="Link da Kiwify"
                 value={draft.checkoutUrl}
