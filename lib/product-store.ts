@@ -14,7 +14,7 @@ type ProductStoreData = {
   deletedSlugs: string[];
 };
 
-function getRedisConfig() {
+export function getRedisConfig() {
   const url =
     process.env.UPSTASH_REDIS_REST_URL ||
     process.env.KV_REST_API_URL ||
@@ -61,7 +61,7 @@ function parseStore(raw: string | null): ProductStoreData {
   }
 }
 
-async function redisCommand<T>(command: unknown[]) {
+export async function redisCommand<T>(command: unknown[]) {
   const config = getRedisConfig();
   if (!config) throw new Error("Armazenamento persistente nao configurado.");
 

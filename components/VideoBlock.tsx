@@ -17,7 +17,7 @@ export function VideoBlock({ product }: { product: ProductContent }) {
     <section className="bg-white px-4 py-16">
       <div className="mx-auto max-w-5xl">
         <div className="mb-8 text-center">
-          <h2 className="text-3xl font-bold text-ink md:text-4xl">Veja como o material funciona por dentro</h2>
+          <h2 className="text-3xl font-bold text-ink md:text-4xl">Veja mais detalhes do material</h2>
           <p className="mt-3 text-lg text-muted">Clique no video para conhecer a entrega antes de garantir o acesso.</p>
         </div>
         <div className="relative aspect-video w-full overflow-hidden rounded-md bg-ink shadow-xl">

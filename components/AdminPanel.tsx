@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, LogOut, Plus, Save, Trash2 } from "lucide-react";
+import { BarChart3, Eye, LogOut, Plus, RotateCcw, Save, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ProductContent } from "@/lib/types";
@@ -30,6 +30,8 @@ const emptyProduct: ProductContent = {
     conversionLabel: ""
   }
 };
+
+type ClickMetrics = Record<string, number>;
 
 function slugify(value: string) {
   return value
@@ -61,8 +63,16 @@ export function AdminPanel({ baseProducts }: AdminPanelProps) {
   );
   const canDeleteSelectedProduct = products.some((product) => product.slug === selectedProduct.slug);
   const [draft, setDraft] = useState<ProductContent>(selectedProduct);
+  const [clickMetrics, setClickMetrics] = useState<ClickMetrics>({});
   const [savedMessage, setSavedMessage] = useState("");
   const [storageMessage, setStorageMessage] = useState("");
+  const metricSlugs = useMemo(
+    () =>
+      Array.from(new Set([...products.map((product) => product.slug), ...Object.keys(clickMetrics)])).sort((a, b) =>
+        a.localeCompare(b)
+      ),
+    [clickMetrics, products]
+  );
 
   useEffect(() => {
     let isCurrent = true;
@@ -94,6 +104,16 @@ export function AdminPanel({ baseProducts }: AdminPanelProps) {
             ? ""
             : "Armazenamento persistente pendente: configure Redis/Upstash na Vercel antes de usar em producao."
         );
+
+        const clicksResponse = await fetch("/api/admin/clicks", { cache: "no-store" });
+        const clicksData = (await clicksResponse.json()) as {
+          clicks?: ClickMetrics;
+          error?: string;
+        };
+
+        if (clicksResponse.ok && isCurrent) {
+          setClickMetrics(clicksData.clicks || {});
+        }
       } catch (error) {
         if (!isCurrent) return;
 
@@ -117,6 +137,14 @@ export function AdminPanel({ baseProducts }: AdminPanelProps) {
   useEffect(() => {
     setDraft(selectedProduct);
   }, [selectedProduct]);
+
+  async function refreshClickMetrics() {
+    const response = await fetch("/api/admin/clicks", { cache: "no-store" });
+    const data = (await response.json()) as { clicks?: ClickMetrics; error?: string };
+
+    if (!response.ok) throw new Error(data.error || "Nao foi possivel carregar as metricas.");
+    setClickMetrics(data.clicks || {});
+  }
 
   function updateField<Key extends keyof ProductContent>(key: Key, value: ProductContent[Key]) {
     setDraft((current) => ({ ...current, [key]: value }));
@@ -172,6 +200,26 @@ export function AdminPanel({ baseProducts }: AdminPanelProps) {
       setSavedMessage(`Pagina /${slugToDelete} excluida.`);
     } catch (error) {
       setSavedMessage(error instanceof Error ? error.message : "Nao foi possivel excluir a pagina.");
+    }
+
+    window.setTimeout(() => setSavedMessage(""), 6000);
+  }
+
+  async function resetClickMetric(slug: string) {
+    try {
+      const response = await fetch("/api/admin/reset-clicks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug })
+      });
+      const data = (await response.json()) as { clicks?: ClickMetrics; error?: string };
+
+      if (!response.ok) throw new Error(data.error || "Nao foi possivel resetar os cliques.");
+
+      setClickMetrics(data.clicks || {});
+      setSavedMessage(`Cliques de /${slug} resetados.`);
+    } catch (error) {
+      setSavedMessage(error instanceof Error ? error.message : "Nao foi possivel resetar os cliques.");
     }
 
     window.setTimeout(() => setSavedMessage(""), 6000);
@@ -342,6 +390,55 @@ export function AdminPanel({ baseProducts }: AdminPanelProps) {
                 Excluir pagina
               </button>
               {savedMessage ? <p className="font-bold text-primary">{savedMessage}</p> : null}
+            </div>
+          </section>
+
+          <section className="rounded-md bg-white p-4 shadow-ege md:p-6 lg:col-start-2">
+            <div className="mb-5 flex flex-col gap-3 border-b border-black/10 pb-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <div className="flex items-center gap-2 text-primary">
+                  <BarChart3 size={22} aria-hidden="true" />
+                  <h2 className="text-2xl font-black">📊 Métricas de Cliques</h2>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => void refreshClickMetrics()}
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-primary/20 px-4 py-2 font-bold text-primary transition hover:border-secondary hover:bg-secondary"
+              >
+                <RotateCcw size={18} aria-hidden="true" />
+                Atualizar
+              </button>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[480px] border-collapse text-left">
+                <thead>
+                  <tr className="border-b border-black/10 text-sm uppercase text-muted">
+                    <th className="py-3 pr-4 font-black">Slug</th>
+                    <th className="py-3 pr-4 font-black">Cliques</th>
+                    <th className="py-3 text-right font-black">Ação</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {metricSlugs.map((slug) => (
+                    <tr key={slug} className="border-b border-black/5">
+                      <td className="py-4 pr-4 font-bold text-primary">/{slug}</td>
+                      <td className="py-4 pr-4 text-2xl font-black text-ink">{clickMetrics[slug] || 0}</td>
+                      <td className="py-4 text-right">
+                        <button
+                          type="button"
+                          onClick={() => void resetClickMetric(slug)}
+                          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-red-200 px-3 py-2 font-bold text-red-700 transition hover:border-red-700 hover:bg-red-50"
+                        >
+                          <RotateCcw size={16} aria-hidden="true" />
+                          Resetar
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </section>
         </div>

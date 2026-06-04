@@ -42,7 +42,7 @@ export function SalesPage({ baseProduct }: SalesPageProps) {
             <p className="mt-5 max-w-2xl text-lg leading-8 text-muted md:text-xl">{product.subheadline}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
               <CTAButton product={product} className="w-full sm:w-auto" />
-              <span className="text-sm font-bold text-primary">Compra segura via Kiwify</span>
+              <span className="text-sm font-bold text-primary">Acesso imediato</span>
             </div>
           </div>
 
@@ -69,7 +69,7 @@ export function SalesPage({ baseProduct }: SalesPageProps) {
       <section className="bg-soft px-4 py-16">
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-2">
           <div>
-            <h2 className="text-3xl font-black text-primary md:text-4xl">Beneficios diretos para quem compra agora</h2>
+            <h2 className="text-3xl font-black text-primary md:text-4xl">Benefícios diretos para quem compra agora</h2>
             <div className="mt-8 space-y-5">
               {product.benefits.map((benefit) => (
                 <div key={benefit} className="flex gap-3">
@@ -84,7 +84,7 @@ export function SalesPage({ baseProduct }: SalesPageProps) {
             <div className="mb-5 inline-flex rounded-md bg-primary/10 p-3 text-primary">
               <FileText size={28} aria-hidden="true" />
             </div>
-            <h2 className="text-3xl font-black text-primary">O que voce recebe</h2>
+            <h2 className="text-3xl font-black text-primary">O que você recebe</h2>
             <ul className="mt-6 space-y-4">
               {product.contentList.map((item) => (
                 <li key={item} className="flex gap-3 text-muted">
@@ -103,7 +103,7 @@ export function SalesPage({ baseProduct }: SalesPageProps) {
             <Sparkles className="mb-4 text-secondary" size={34} aria-hidden="true" />
             <h2 className="text-3xl font-black md:text-5xl">Garanta o acesso antes do tempo acabar</h2>
             <p className="mt-4 text-lg leading-8 text-white/80">
-              Todos os botoes desta pagina enviam para o checkout Kiwify configurado. O evento de conversao e disparado no clique.
+              Acesso por tempo limitado, aproveite essa oportunidade exclusiva para obter esse produto EGE, prontinho para aplicação em sala.
             </p>
           </div>
           <div className="rounded-md bg-white p-6 text-ink shadow-ege">
@@ -124,7 +124,7 @@ export function SalesPage({ baseProduct }: SalesPageProps) {
             <LockKeyhole size={42} aria-hidden="true" />
           </div>
           <div>
-            <h2 className="text-3xl font-black text-primary">Garantia e seguranca</h2>
+            <h2 className="text-3xl font-black text-primary">Garantia e segurança</h2>
             <p className="mt-3 text-lg leading-8 text-muted">{product.guarantee}</p>
           </div>
         </div>
@@ -132,8 +132,8 @@ export function SalesPage({ baseProduct }: SalesPageProps) {
 
       <section className="bg-white px-4 py-16 text-center">
         <div className="mx-auto max-w-3xl">
-          <h2 className="text-3xl font-black text-primary md:text-4xl">Pronto para facilitar sua proxima etapa?</h2>
-          <p className="mt-4 text-lg text-muted">Clique abaixo e conclua a compra no checkout configurado.</p>
+          <h2 className="text-3xl font-black text-primary md:text-4xl">Pronto para facilitar sua facilitar sua vida</h2>
+          <p className="mt-4 text-lg text-muted">Clique abaixo e adquira agora mesmo o seu material.</p>
           <div className="mt-8">
             <CTAButton product={product} className="w-full sm:w-auto" label={`${product.cta} - ${product.price}`} />
           </div>

@@ -3,7 +3,7 @@
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import type { MouseEvent } from "react";
 import type { ProductContent } from "@/lib/types";
-import { ensureGoogleAds, trackConversion, trackEvent } from "@/lib/tracking";
+import { ensureGoogleAds, trackClick, trackConversion, trackEvent } from "@/lib/tracking";
 
 type CTAButtonProps = {
   product: ProductContent;
@@ -25,6 +25,7 @@ export function CTAButton({ product, className = "", label, variant = "primary" 
       slug: product.slug,
       checkoutUrl: product.checkoutUrl
     });
+    void trackClick(product.slug);
     trackConversion(product.tracking);
     window.setTimeout(() => {
       window.location.href = product.checkoutUrl;

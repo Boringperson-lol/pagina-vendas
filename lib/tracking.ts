@@ -45,3 +45,27 @@ export function trackConversion(settings: TrackingSettings) {
     send_to: `${settings.googleAdsId}/${settings.conversionLabel}`
   });
 }
+
+export async function trackClick(slug: string) {
+  const payload = JSON.stringify({ slug });
+
+  if (navigator.sendBeacon) {
+    const sent = navigator.sendBeacon(
+      "/api/track-click",
+      new Blob([payload], { type: "application/json" })
+    );
+    if (sent) return true;
+  }
+
+  try {
+    await fetch("/api/track-click", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: payload,
+      keepalive: true
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
